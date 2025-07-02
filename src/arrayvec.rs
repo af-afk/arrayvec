@@ -1340,17 +1340,26 @@ where
     }
 }
 
+impl<const CAP: usize> ArrayVec<u8, CAP> {
+    /// `Write` appends written data to the end of the vector.
+    pub fn write(&mut self, data: &[u8]) -> usize {
+        let len = cmp::min(self.remaining_capacity(), data.len());
+        let _result = self.try_extend_from_slice(&data[..len]);
+        debug_assert!(_result.is_ok());
+        len
+    }
+}
+
 #[cfg(feature = "std")]
 /// `Write` appends written data to the end of the vector.
+/// Wraps the existing write function.
 ///
 /// Requires `features="std"`.
 impl<const CAP: usize> io::Write for ArrayVec<u8, CAP> {
     fn write(&mut self, data: &[u8]) -> io::Result<usize> {
-        let len = cmp::min(self.remaining_capacity(), data.len());
-        let _result = self.try_extend_from_slice(&data[..len]);
-        debug_assert!(_result.is_ok());
-        Ok(len)
+        Ok(ArrayVec::write(self, data))
     }
+
     fn flush(&mut self) -> io::Result<()> {
         Ok(())
     }
@@ -1416,6 +1425,33 @@ where
 {
     fn serialize<W: borsh::io::Write>(&self, writer: &mut W) -> borsh::io::Result<()> {
         <[T] as borsh::BorshSerialize>::serialize(self.as_slice(), writer)
+    }
+}
+
+#[cfg(all(feature = "borsh", not(feature = "std")))]
+/// Requires crate feature `"borsh"`
+impl<const CAP: usize> borsh::io::Write for ArrayVec<u8, CAP> {
+    fn write(&mut self, data: &[u8]) -> borsh::io::Result<usize> {
+        Ok(ArrayVec::write(self, data))
+    }
+
+    fn write_all(&mut self, mut buf: &[u8]) -> borsh::io::Result<()> {
+        while !buf.is_empty() {
+            match self.write(buf) {
+                0 => {
+                    return Err(borsh::io::Error::new(
+                        borsh::io::ErrorKind::WriteZero,
+                        "failed to write whole buffer",
+                    ));
+                }
+                n => buf = &buf[n..],
+            }
+        }
+        Ok(())
+    }
+
+    fn flush(&mut self) -> borsh::io::Result<()> {
+        Ok(())
     }
 }
 
