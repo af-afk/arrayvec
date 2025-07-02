@@ -1428,7 +1428,7 @@ where
     }
 }
 
-#[cfg(all(feature = "borsh", not(feature = "std")))]
+#[cfg(all(feature = "borsh"))]
 /// Requires crate feature `"borsh"`
 impl<const CAP: usize> borsh::io::Write for ArrayVec<u8, CAP> {
     fn write(&mut self, data: &[u8]) -> borsh::io::Result<usize> {

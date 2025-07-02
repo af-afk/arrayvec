@@ -46,6 +46,39 @@ mod array_vec {
         assert_ser(&vec, b"\x01\0\0\0\xef\xbe\xad\xde");
         assert_roundtrip(&vec);
     }
+
+    #[test]
+    fn test_borsh_one_to_one() {
+        use borsh::{BorshDeserialize, BorshSerialize};
+        #[derive(BorshSerialize, BorshDeserialize)]
+        struct Something {
+            a: String,
+        }
+        let a = Something {
+            a: "hello".to_owned(),
+        };
+        let mut vec = ArrayVec::<u8, 9>::new();
+        a.serialize(&mut vec).unwrap();
+        let mut test = Vec::new();
+        a.serialize(&mut test).unwrap();
+        assert_eq!(vec.as_slice(), test.as_slice());
+    }
+
+    #[test]
+    fn test_borsh_more_than() {
+        use borsh::{io::ErrorKind, BorshDeserialize, BorshSerialize};
+        #[derive(BorshSerialize, BorshDeserialize)]
+        struct Something {
+            a: String,
+        }
+        let mut b = ArrayVec::<u8, 5>::new();
+        let err = Something {
+            a: "Hello, world!".to_owned(),
+        }
+        .serialize(&mut b)
+        .unwrap_err();
+        assert_eq!(ErrorKind::WriteZero, err.kind());
+    }
 }
 
 mod array_string {
