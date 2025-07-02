@@ -1,4 +1,4 @@
-//! **arrayvec** provides the types [`ArrayVec`] and [`ArrayString`]: 
+//! **arrayvec** provides the types [`ArrayVec`] and [`ArrayString`]:
 //! array-backed vector and string types, which store their contents inline.
 //!
 //! The arrayvec package has the following cargo features:
@@ -20,7 +20,8 @@
 //! This version of arrayvec requires Rust 1.51 or later.
 //!
 #![doc(html_root_url="https://docs.rs/arrayvec/0.7/")]
-#![cfg_attr(not(feature="std"), no_std)]
+
+#![cfg_attr(not(feature = "std"), no_std)]
 
 #[cfg(feature="serde")]
 extern crate serde;

@@ -1,5 +1,5 @@
-use std::ptr;
-use std::slice;
+use core::ptr;
+use core::slice;
 
 use crate::CapacityError;
 

@@ -6,6 +6,7 @@ use arrayvec::ArrayString;
 use std::mem;
 use arrayvec::CapacityError;
 
+#[cfg(feature = "std")]
 use std::collections::HashMap;
 
 
