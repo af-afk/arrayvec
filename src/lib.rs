@@ -19,14 +19,13 @@
 //!
 //! This version of arrayvec requires Rust 1.51 or later.
 //!
-#![doc(html_root_url="https://docs.rs/arrayvec/0.7/")]
-
+#![doc(html_root_url = "https://docs.rs/arrayvec/0.7/")]
 #![cfg_attr(not(feature = "std"), no_std)]
 
-#[cfg(feature="serde")]
+#[cfg(feature = "serde")]
 extern crate serde;
 
-#[cfg(not(feature="std"))]
+#[cfg(not(feature = "std"))]
 extern crate core as std;
 
 #[cfg(not(target_pointer_width = "16"))]
@@ -45,7 +44,7 @@ macro_rules! assert_capacity_limit {
                 panic!("ArrayVec: largest supported capacity is u16::MAX");
             }
         }
-    }
+    };
 }
 
 macro_rules! assert_capacity_limit_const {
@@ -58,9 +57,9 @@ macro_rules! assert_capacity_limit_const {
     }
 }
 
-mod arrayvec_impl;
-mod arrayvec;
 mod array_string;
+mod arrayvec;
+mod arrayvec_impl;
 mod char;
 mod errors;
 mod utils;
@@ -68,4 +67,4 @@ mod utils;
 pub use crate::array_string::ArrayString;
 pub use crate::errors::CapacityError;
 
-pub use crate::arrayvec::{ArrayVec, IntoIter, Drain};
+pub use crate::arrayvec::{ArrayVec, Drain, IntoIter};

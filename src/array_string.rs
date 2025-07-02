@@ -25,7 +25,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 extern crate alloc;
 
 #[cfg(all(not(feature = "std"), feature = "borsh"))]
-use alloc::{string::ToString, format};
+use alloc::{format, string::ToString};
 
 /// A string with a fixed capacity.
 ///
